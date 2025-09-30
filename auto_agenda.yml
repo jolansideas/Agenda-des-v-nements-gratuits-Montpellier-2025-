@@ -1,0 +1,35 @@
+name: Générer calendrier événements Montpellier
+
+on:
+  schedule:
+    - cron: '30 3 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run agenda script
+        run: python agenda_montpellier_auto.py
+
+      - name: Upload generated files
+        uses: actions/upload-artifact@v4
+        with:
+          name: evenements-montpellier
+          path: |
+            evenements_montpellier_auto.xlsx
+            INTRA_montpellier_gratuits.csv
+            OUTSIDE_20km_gratuits.csv
